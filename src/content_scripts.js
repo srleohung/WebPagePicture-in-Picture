@@ -1,5 +1,6 @@
 const VIEW_MODE_ID = "wppip-view-mode"
 const SPLIT_MODE_ID = "wppip-split-mode"
+const URL_INPUT_ID = "wppip-url-input"
 
 function getIframe(settings) {
     return '<iframe id="' + settings.id + '" width="' + settings.width + '" height="' + settings.height + '" style="' + settings.style + '" src="' + settings.src + '" />'
@@ -7,6 +8,18 @@ function getIframe(settings) {
 
 function getFrameset(settings) {
     return '<frameset cols="50%, 50%"><frame src="' + settings.pageUrl + '" /><frame src="' + settings.src + '" id="' + settings.id + '"/></frameset>'
+}
+
+function getUrlInput(settings) {
+    return '<input id="' + URL_INPUT_ID + '" type="url" style="width: ' + settings.width + "px;" + settings.style + '" value="' + settings.src + '" />'
+}
+
+function addUrlInputEventListener(settings) {
+    document.getElementById(URL_INPUT_ID).addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            document.getElementById(settings.id).src = document.getElementById(URL_INPUT_ID).value;
+        }
+    });
 }
 
 function open(payload) {
@@ -28,6 +41,8 @@ function openByViewMode(settings) {
         document.getElementById(settings.id).remove()
     }
     document.body.innerHTML += getIframe(settings)
+    document.body.innerHTML += getUrlInput(settings)
+    addUrlInputEventListener(settings)
 }
 
 function openBySplitMode(settings) {
@@ -61,6 +76,9 @@ function update(settings) {
         document.getElementById(settings.id).width = settings.width
         document.getElementById(settings.id).height = settings.height
         document.getElementById(settings.id).style = settings.style
+    }
+    if (document.getElementById(URL_INPUT_ID)) {
+        document.getElementById(URL_INPUT_ID).style = "width: " + settings.width + "px;" + settings.style
     }
 }
 
